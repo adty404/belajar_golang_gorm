@@ -1,0 +1,6 @@
+.env
+*.toml
+tmp/
+.env
+*.pem
+.idea
