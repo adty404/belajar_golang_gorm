@@ -1,11 +1,11 @@
 package belajar_golang_gorm
 
 import (
-	"testing"
-
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"strconv"
+	"testing"
 )
 
 func OpenConnection() *gorm.DB {
@@ -86,4 +86,40 @@ func TestScanRow(t *testing.T) {
 		assert.Nil(t, err)
 	}
 	assert.Len(t, samples, 3)
+}
+
+func TestCreateUser(t *testing.T) {
+	user := User{
+		ID:       "1",
+		Password: "rahasia",
+		Name: Name{
+			FirstName:  "Aditya",
+			MiddleName: "Jago",
+			LastName:   "Prasetyo",
+		},
+		Information: "ini akan di ignore",
+	}
+
+	response := db.Create(&user)
+	assert.Nil(t, response.Error)
+	assert.Equal(t, int64(1), response.RowsAffected)
+}
+
+func TestBatchInsert(t *testing.T) {
+	var users []User
+	for i := 2; i < 10; i++ {
+		users = append(
+			users, User{
+				ID:       strconv.Itoa(i),
+				Password: "rahasia",
+				Name: Name{
+					FirstName: "User" + strconv.Itoa(i),
+				},
+			},
+		)
+	}
+
+	response := db.Create(&users)
+	assert.Nil(t, response.Error)
+	assert.Equal(t, int64(8), response.RowsAffected)
 }
